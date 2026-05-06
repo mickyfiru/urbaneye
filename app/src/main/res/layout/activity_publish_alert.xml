@@ -1,0 +1,13 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/urban_bg">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Publicar alerta" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold" />
+        <Spinner android:id="@+id/typeSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <EditText android:id="@+id/titleInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Título" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
+        <EditText android:id="@+id/descriptionInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Descripción" android:minLines="3" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
+        <EditText android:id="@+id/latitudeInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Latitud" android:inputType="numberDecimal|numberSigned" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
+        <EditText android:id="@+id/longitudeInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Longitud" android:inputType="numberDecimal|numberSigned" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
+        <Spinner android:id="@+id/durationSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <Button android:id="@+id/publishButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Publicar con tokens" />
+        <ProgressBar android:id="@+id/progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>
