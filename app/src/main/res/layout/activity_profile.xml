@@ -1,0 +1,6 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="24dp" android:background="@color/urban_bg">
+    <TextView android:id="@+id/nameText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" />
+    <TextView android:id="@+id/statsText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#CCFFFFFF" android:textSize="18sp" />
+    <Button android:id="@+id/rewardButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Ver anuncio +20 tokens" />
+    <Button android:id="@+id/logoutButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Cerrar sesión" />
+</LinearLayout>
