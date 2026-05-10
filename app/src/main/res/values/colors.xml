@@ -1,0 +1,8 @@
+<resources>
+    <color name="urban_bg">#101820</color>
+    <color name="urban_surface">#182630</color>
+    <color name="urban_primary">#35D07F</color>
+    <color name="alert_red">#F44336</color>
+    <color name="alert_yellow">#FFC107</color>
+    <color name="alert_green">#39D353</color>
+</resources>

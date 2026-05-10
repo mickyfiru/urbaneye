@@ -1,0 +1,6 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="24dp" android:background="@color/urban_bg">
+    <TextView android:id="@+id/titleText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Detalle de alerta" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" />
+    <Button android:id="@+id/confirmButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Sí, sigue ahí" />
+    <Button android:id="@+id/denyButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Ya no existe" />
+    <Button android:id="@+id/reportButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Reportar abuso" />
+</LinearLayout>

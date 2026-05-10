@@ -1,0 +1,7 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center" android:padding="24dp" android:background="@color/urban_bg">
+    <EditText android:id="@+id/usernameInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Nombre de usuario" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
+    <EditText android:id="@+id/emailInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Email" android:inputType="textEmailAddress" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
+    <EditText android:id="@+id/passwordInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Contraseña" android:inputType="textPassword" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
+    <Button android:id="@+id/createAccountButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Registrarme" />
+    <ProgressBar android:id="@+id/progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone" />
+</LinearLayout>

@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.UrbanEye" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/urban_primary</item>
+        <item name="colorPrimaryVariant">@color/urban_primary</item>
+        <item name="colorOnPrimary">#00140A</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/urban_bg</item>
+    </style>
+</resources>
