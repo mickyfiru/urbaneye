@@ -32,7 +32,7 @@ public class ProfileActivity extends AppCompatActivity {
             profileViewModel.observeUser(userId).observe(this, resource -> {
                 if (resource.status.name().equals("SUCCESS") && resource.data != null) {
                     name.setText(resource.data.username);
-                    stats.setText("Tokens: " + resource.data.tokens + "\nXP: " + resource.data.xp + "\nReputación: " + resource.data.reputation + "%");
+                    stats.setText("Nivel " + resource.data.level + "  ·  " + resource.data.reputation + "% reputación\n" + resource.data.tokens + " tokens  ·  " + resource.data.xp + " XP\n" + resource.data.reportsConfirmed + " confirmadas  ·  " + resource.data.reportsRejected + " rechazadas");
                 }
             });
         }

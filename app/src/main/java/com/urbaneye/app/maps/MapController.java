@@ -31,14 +31,23 @@ public class MapController {
     }
 
     public void initialize(Runnable onReady) {
-        mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS, style -> onReady.run());
+        mapView.getMapboxMap().loadStyleUri(Style.DARK, style -> onReady.run());
     }
 
     public void centerOn(Location location) {
+        centerOn(location.getLatitude(), location.getLongitude(), 15.2, 48.0);
+    }
+
+    public void centerOn(double latitude, double longitude) {
+        centerOn(latitude, longitude, 16.0, 50.0);
+    }
+
+    private void centerOn(double latitude, double longitude, double zoom, double pitch) {
         CameraOptions camera = new CameraOptions.Builder()
-                .center(Point.fromLngLat(location.getLongitude(), location.getLatitude()))
-                .zoom(15.0)
-                .pitch(45.0)
+                .center(Point.fromLngLat(longitude, latitude))
+                .zoom(zoom)
+                .pitch(pitch)
+                .bearing(-12.0)
                 .build();
         mapView.getMapboxMap().setCamera(camera);
     }
@@ -50,8 +59,8 @@ public class MapController {
             TextView marker = buildMarker(alert);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
-            params.leftMargin = offsetFor(index, 92, 5);
-            params.topMargin = offsetFor(index, 68, 7);
+            params.leftMargin = offsetFor(index, 82, 5);
+            params.topMargin = offsetFor(index, 58, 7);
             markerOverlay.addView(marker, params);
             index++;
         }
@@ -59,15 +68,18 @@ public class MapController {
 
     private TextView buildMarker(Alert alert) {
         TextView marker = new TextView(context);
-        marker.setText(symbolFor(alert.type) + " " + alert.title);
+        marker.setText(symbolFor(alert.type) + "  " + alert.title);
         marker.setTextColor(0xFFFFFFFF);
-        marker.setTextSize(alert.type == AlertType.RED ? 16 : 14);
+        marker.setTextSize(alert.type == AlertType.RED ? 15 : 13);
         marker.setGravity(Gravity.CENTER);
-        marker.setPadding(18, 10, 18, 10);
-        marker.setBackgroundColor(colorFor(alert.type));
-        marker.setElevation(alert.type == AlertType.RED ? 18f : 10f);
-        marker.setAlpha(0.94f);
-        marker.animate().translationYBy(-10f).setDuration(850L).withEndAction(() -> marker.animate().translationYBy(10f).setDuration(850L).start()).start();
+        marker.setPadding(22, 12, 22, 12);
+        marker.setBackgroundResource(R.drawable.bg_chip);
+        marker.setTextColor(colorFor(alert.type));
+        marker.setElevation(alert.type == AlertType.RED ? 22f : 14f);
+        marker.setAlpha(0.96f);
+        marker.setScaleX(0.86f);
+        marker.setScaleY(0.86f);
+        marker.animate().scaleX(1f).scaleY(1f).translationYBy(-8f).setDuration(420L).withEndAction(() -> marker.animate().translationYBy(8f).setDuration(900L).start()).start();
         return marker;
     }
 
@@ -80,7 +92,7 @@ public class MapController {
     private String symbolFor(AlertType type) {
         if (type == AlertType.RED) return "⚠";
         if (type == AlertType.YELLOW) return "●";
-        return "✓";
+        return "●";
     }
 
     private int offsetFor(int index, int amplitude, int seed) {
