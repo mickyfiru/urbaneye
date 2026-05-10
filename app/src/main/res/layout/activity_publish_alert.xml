@@ -1,13 +1,27 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/urban_bg">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Publicar alerta" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold" />
-        <Spinner android:id="@+id/typeSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
-        <EditText android:id="@+id/titleInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Título" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
-        <EditText android:id="@+id/descriptionInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Descripción" android:minLines="3" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
-        <EditText android:id="@+id/latitudeInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Latitud" android:inputType="numberDecimal|numberSigned" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
-        <EditText android:id="@+id/longitudeInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Longitud" android:inputType="numberDecimal|numberSigned" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
-        <Spinner android:id="@+id/durationSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" />
-        <Button android:id="@+id/publishButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Publicar con tokens" />
-        <ProgressBar android:id="@+id/progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone" />
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/urban_bg">
+    <com.mapbox.maps.MapView android:id="@+id/publishMapView" android:layout_width="match_parent" android:layout_height="match_parent" />
+    <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#66050B16" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="20dp">
+            <TextView android:id="@+id/backButton" android:layout_width="44dp" android:layout_height="44dp" android:gravity="center" android:text="‹" android:textColor="@color/urban_text" android:textSize="34sp" />
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="Nueva alerta" android:textColor="@color/urban_text" android:textSize="18sp" android:textStyle="bold" />
+            <Space android:layout_width="44dp" android:layout_height="44dp" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:background="@drawable/bg_card" android:elevation="16dp" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Escribe una calle o dirección" android:textColor="@color/urban_text_muted" android:textSize="13sp" />
+            <AutoCompleteTextView android:id="@+id/addressInput" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="10dp" android:background="@drawable/bg_input" android:hint="Av. Arturo Prat, Iquique" android:inputType="textPostalAddress" android:singleLine="true" android:textColor="@color/urban_text" android:textColorHint="@color/urban_text_muted" />
+        </LinearLayout>
+        <TextView android:id="@+id/selectedPin" android:layout_width="56dp" android:layout_height="56dp" android:layout_gravity="center_horizontal" android:layout_marginTop="96dp" android:background="@drawable/bg_pin" android:elevation="18dp" android:gravity="center" android:text="●" android:textColor="@color/urban_bg" android:textSize="18sp" android:visibility="gone" />
+        <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_bottom_nav" android:elevation="24dp" android:orientation="vertical" android:padding="20dp">
+            <EditText android:id="@+id/titleInput" android:layout_width="match_parent" android:layout_height="52dp" android:background="@drawable/bg_input" android:hint="Título breve" android:textColor="@color/urban_text" android:textColorHint="@color/urban_text_muted" />
+            <EditText android:id="@+id/descriptionInput" android:layout_width="match_parent" android:layout_height="92dp" android:layout_marginTop="12dp" android:background="@drawable/bg_input" android:gravity="top" android:hint="¿Qué está ocurriendo?" android:minLines="3" android:textColor="@color/urban_text" android:textColorHint="@color/urban_text_muted" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:orientation="horizontal">
+                <Spinner android:id="@+id/typeSpinner" android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:background="@drawable/bg_input" />
+                <Spinner android:id="@+id/durationSpinner" android:layout_width="0dp" android:layout_height="52dp" android:layout_marginStart="10dp" android:layout_weight="1" android:background="@drawable/bg_input" />
+            </LinearLayout>
+            <Button android:id="@+id/publishButton" android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="16dp" android:background="@drawable/bg_primary_button" android:text="Publicar alerta" android:textAllCaps="false" android:textColor="@color/urban_text" android:textSize="16sp" android:textStyle="bold" />
+            <ProgressBar android:id="@+id/progress" android:layout_width="32dp" android:layout_height="32dp" android:layout_gravity="center_horizontal" android:layout_marginTop="10dp" android:indeterminateTint="@color/urban_primary_soft" android:visibility="gone" />
+        </LinearLayout>
     </LinearLayout>
-</ScrollView>
+</FrameLayout>
