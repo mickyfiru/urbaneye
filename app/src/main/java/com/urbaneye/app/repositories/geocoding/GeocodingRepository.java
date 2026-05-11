@@ -1,9 +1,13 @@
 package com.urbaneye.app.repositories.geocoding;
 
+import android.content.Context;
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.urbaneye.app.BuildConfig;
+import com.urbaneye.app.R;
 import com.urbaneye.app.utils.Resource;
 
 import java.util.ArrayList;
@@ -17,14 +21,17 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GeocodingRepository {
+    private static final String TAG = "UrbanEyeGeocoding";
     private final MapboxGeocodingService service;
+    private final String accessToken;
 
-    public GeocodingRepository() {
+    public GeocodingRepository(Context context) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.mapbox.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         service = retrofit.create(MapboxGeocodingService.class);
+        accessToken = resolveAccessToken(context.getApplicationContext());
     }
 
     public LiveData<Resource<List<AddressSuggestion>>> autocomplete(String query, Double userLatitude, Double userLongitude) {
@@ -35,11 +42,12 @@ public class GeocodingRepository {
         }
         if (!hasMapboxToken(result)) return result;
         String proximity = proximityValue(userLatitude, userLongitude);
-        service.search(query.trim(), BuildConfig.MAPBOX_ACCESS_TOKEN, true, 8, "es", "address,poi,place,locality,neighborhood", proximity)
+        service.search(query.trim(), accessToken, true, 10, "es", "address,poi,place,locality,neighborhood", proximity, "cl")
                 .enqueue(new Callback<MapboxGeocodingResponse>() {
                     @Override
                     public void onResponse(Call<MapboxGeocodingResponse> call, Response<MapboxGeocodingResponse> response) {
                         if (!response.isSuccessful() || response.body() == null) {
+                            Log.e(TAG, "Autocomplete failed. code=" + response.code() + " message=" + response.message());
                             result.setValue(Resource.error("Mapbox no respondió. Intenta nuevamente."));
                             return;
                         }
@@ -49,6 +57,7 @@ public class GeocodingRepository {
 
                     @Override
                     public void onFailure(Call<MapboxGeocodingResponse> call, Throwable t) {
+                        Log.e(TAG, "Autocomplete network failure", t);
                         result.setValue(Resource.error("Sin internet o Mapbox no disponible."));
                     }
                 });
@@ -59,11 +68,12 @@ public class GeocodingRepository {
         MutableLiveData<Resource<AddressSuggestion>> result = new MutableLiveData<>(Resource.loading());
         if (!hasMapboxToken(result)) return result;
         String coordinates = String.format(Locale.US, "%.7f,%.7f", longitude, latitude);
-        service.search(coordinates, BuildConfig.MAPBOX_ACCESS_TOKEN, false, 1, "es", "address,poi,place,locality,neighborhood", null)
+        service.search(coordinates, accessToken, false, 1, "es", "address,poi,place,locality,neighborhood", null, null)
                 .enqueue(new Callback<MapboxGeocodingResponse>() {
                     @Override
                     public void onResponse(Call<MapboxGeocodingResponse> call, Response<MapboxGeocodingResponse> response) {
                         if (!response.isSuccessful() || response.body() == null) {
+                            Log.e(TAG, "Reverse geocode failed. code=" + response.code() + " message=" + response.message());
                             result.setValue(Resource.error("No se pudo actualizar la dirección."));
                             return;
                         }
@@ -77,6 +87,7 @@ public class GeocodingRepository {
 
                     @Override
                     public void onFailure(Call<MapboxGeocodingResponse> call, Throwable t) {
+                        Log.e(TAG, "Reverse geocode network failure", t);
                         result.setValue(Resource.error("Sin internet. No se pudo actualizar la dirección."));
                     }
                 });
@@ -84,8 +95,9 @@ public class GeocodingRepository {
     }
 
     private <T> boolean hasMapboxToken(MutableLiveData<Resource<T>> result) {
-        if (BuildConfig.MAPBOX_ACCESS_TOKEN == null || BuildConfig.MAPBOX_ACCESS_TOKEN.isEmpty()) {
-            result.setValue(Resource.error("Configura MAPBOX_ACCESS_TOKEN para usar Mapbox."));
+        if (accessToken == null || accessToken.trim().isEmpty() || accessToken.startsWith("${")) {
+            Log.e(TAG, "Mapbox access token missing. Configure string resource mapbox_access_token.");
+            result.setValue(Resource.error("Configura mapbox_access_token para usar Mapbox."));
             return false;
         }
         return true;
@@ -122,5 +134,13 @@ public class GeocodingRepository {
                 + Math.cos(Math.toRadians(originLatitude)) * Math.cos(Math.toRadians(latitude))
                 * Math.sin(dLng / 2) * Math.sin(dLng / 2);
         return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    private String resolveAccessToken(Context context) {
+        String token = context.getString(R.string.mapbox_access_token);
+        if ((token == null || token.trim().isEmpty() || token.startsWith("${")) && BuildConfig.MAPBOX_ACCESS_TOKEN != null) {
+            token = BuildConfig.MAPBOX_ACCESS_TOKEN;
+        }
+        return token == null ? "" : token.trim();
     }
 }

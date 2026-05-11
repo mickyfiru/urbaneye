@@ -28,11 +28,14 @@ import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.MapView;
 import com.mapbox.maps.Style;
 import com.urbaneye.app.R;
+import com.urbaneye.app.ads.RewardedAdManager;
 import com.urbaneye.app.domain.models.AlertType;
 import com.urbaneye.app.repositories.geocoding.AddressSuggestion;
 import com.urbaneye.app.repositories.geocoding.GeocodingRepository;
 import com.urbaneye.app.services.LocationService;
 import com.urbaneye.app.ui.alerts.adapters.AddressSuggestionAdapter;
+import com.urbaneye.app.utils.TokenRules;
+import com.urbaneye.app.viewmodels.ProfileViewModel;
 import com.urbaneye.app.viewmodels.PublishAlertViewModel;
 
 import java.util.List;
@@ -40,15 +43,18 @@ import java.util.List;
 public class PublishAlertActivity extends AppCompatActivity {
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private final Handler reverseHandler = new Handler(Looper.getMainLooper());
-    private final GeocodingRepository geocodingRepository = new GeocodingRepository();
+    private final RewardedAdManager adManager = new RewardedAdManager();
+    private GeocodingRepository geocodingRepository;
     private AddressSuggestionAdapter suggestionAdapter;
     private MapView mapView;
     private LocationService locationService;
     private EditText addressInput;
     private TextView addressStatusText;
+    private TextView tokensText;
     private RecyclerView suggestionsList;
     private View userLocationMarker;
     private View userGlow;
+    private View rewardAdButton;
     private Double selectedLatitude;
     private Double selectedLongitude;
     private String selectedAddress;
@@ -58,6 +64,7 @@ public class PublishAlertActivity extends AppCompatActivity {
     private boolean cameraCenteredOnGps;
     private boolean useCurrentAfterPermission;
     private boolean userPulseStarted;
+    private int currentTokens;
 
     private final ActivityResultLauncher<String[]> permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
         boolean granted = locationService.hasLocationPermission();
@@ -73,13 +80,17 @@ public class PublishAlertActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish_alert);
         PublishAlertViewModel viewModel = new ViewModelProvider(this).get(PublishAlertViewModel.class);
+        ProfileViewModel profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+        geocodingRepository = new GeocodingRepository(this);
         locationService = new LocationService(this);
         mapView = findViewById(R.id.publishMapView);
         addressInput = findViewById(R.id.addressInput);
         addressStatusText = findViewById(R.id.addressStatusText);
+        tokensText = findViewById(R.id.tokensText);
         suggestionsList = findViewById(R.id.suggestionsList);
         userLocationMarker = findViewById(R.id.userLocationMarker);
         userGlow = findViewById(R.id.userGlow);
+        rewardAdButton = findViewById(R.id.rewardAdButton);
         mapView.getMapboxMap().loadStyleUri(Style.DARK, style -> startLocationIfAllowed(false));
         mapView.setOnTouchListener((view, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
@@ -100,6 +111,17 @@ public class PublishAlertActivity extends AppCompatActivity {
         EditText title = findViewById(R.id.titleInput);
         EditText description = findViewById(R.id.descriptionInput);
         ProgressBar progress = findViewById(R.id.progress);
+        String userId = FirebaseAuth.getInstance().getUid();
+        if (userId != null) {
+            profileViewModel.observeUser(userId).observe(this, resource -> {
+                if (resource.status.name().equals("SUCCESS") && resource.data != null) {
+                    currentTokens = Math.max(0, resource.data.tokens);
+                    tokensText.setText("Tokens: " + currentTokens);
+                }
+                if (resource.status.name().equals("ERROR")) showSnack(resource.message);
+            });
+        }
+        adManager.loadRewardedAd(this);
 
         suggestionAdapter = new AddressSuggestionAdapter(this::selectSuggestion);
         suggestionsList.setLayoutManager(new LinearLayoutManager(this));
@@ -117,6 +139,7 @@ public class PublishAlertActivity extends AppCompatActivity {
 
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
         findViewById(R.id.useCurrentLocationButton).setOnClickListener(v -> useCurrentLocation());
+        rewardAdButton.setOnClickListener(v -> showRewardedAd(profileViewModel));
         findViewById(R.id.publishButton).setOnClickListener(v -> {
             String userId = FirebaseAuth.getInstance().getUid();
             if (userId == null) {
@@ -132,6 +155,11 @@ public class PublishAlertActivity extends AppCompatActivity {
                 return;
             }
             AlertType type = AlertType.valueOf(typeSpinner.getSelectedItem().toString());
+            int cost = TokenRules.costFor(type);
+            if (currentTokens < cost) {
+                showInsufficientTokens(cost);
+                return;
+            }
             int greenMinutes = Integer.parseInt(durationSpinner.getSelectedItem().toString().replace(" min", ""));
             viewModel.publish(type, title.getText().toString().trim(), description.getText().toString().trim(), selectedAddress, selectedLatitude, selectedLongitude, userId, greenMinutes).observe(this, resource -> {
                 progress.setVisibility(resource.status.name().equals("LOADING") ? View.VISIBLE : View.GONE);
@@ -139,8 +167,41 @@ public class PublishAlertActivity extends AppCompatActivity {
                     showSnack("Alerta publicada en el mapa.");
                     finish();
                 }
-                if (resource.status.name().equals("ERROR")) showSnack(resource.message);
+                if (resource.status.name().equals("ERROR")) {
+                    if (resource.message != null && resource.message.contains("Ver anuncio")) rewardAdButton.setVisibility(View.VISIBLE);
+                    showSnack(resource.message);
+                }
             });
+        });
+    }
+
+    private void showInsufficientTokens(int cost) {
+        rewardAdButton.setVisibility(View.VISIBLE);
+        showSnack("Necesitas " + cost + " tokens. Ver anuncio para ganar 20");
+    }
+
+    private void showRewardedAd(ProfileViewModel profileViewModel) {
+        String userId = FirebaseAuth.getInstance().getUid();
+        if (userId == null) {
+            showSnack("Debes iniciar sesión.");
+            return;
+        }
+        adManager.showRewardedAd(this, new RewardedAdManager.RewardCallback() {
+            @Override
+            public void onRewardEarned() {
+                profileViewModel.rewardAdTokens(userId).observe(PublishAlertActivity.this, resource -> {
+                    if (resource.status.name().equals("SUCCESS")) {
+                        rewardAdButton.setVisibility(View.GONE);
+                        showSnack("+20 tokens agregados");
+                    }
+                    if (resource.status.name().equals("ERROR")) showSnack(resource.message);
+                });
+            }
+
+            @Override
+            public void onAdUnavailable(String message) {
+                showSnack("No se pudo cargar el anuncio, intenta nuevamente");
+            }
         });
     }
 

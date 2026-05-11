@@ -7,7 +7,6 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -25,6 +24,7 @@ import com.urbaneye.app.ui.alerts.PublishAlertActivity;
 import com.urbaneye.app.ui.auth.LoginActivity;
 import com.urbaneye.app.ui.profile.ProfileActivity;
 import com.urbaneye.app.viewmodels.MainMapViewModel;
+import com.urbaneye.app.viewmodels.ProfileViewModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private LocationService locationService;
     private TextView cityText;
     private TextView alertsSummaryText;
+    private TextView tokensText;
     private boolean cameraCentered;
     private boolean cityResolved;
 
@@ -53,9 +54,20 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout markerOverlay = findViewById(R.id.markerOverlay);
         cityText = findViewById(R.id.cityText);
         alertsSummaryText = findViewById(R.id.alertsSummaryText);
+        tokensText = findViewById(R.id.tokensText);
         mapController = new MapController(this, mapView, markerOverlay);
         locationService = new LocationService(this);
         MainMapViewModel viewModel = new ViewModelProvider(this).get(MainMapViewModel.class);
+        ProfileViewModel profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+        String userId = FirebaseAuth.getInstance().getUid();
+        if (userId != null) {
+            profileViewModel.observeUser(userId).observe(this, resource -> {
+                if (resource.status.name().equals("SUCCESS") && resource.data != null) {
+                    tokensText.setText("Tokens: " + Math.max(0, resource.data.tokens));
+                }
+                if (resource.status.name().equals("ERROR")) showSnack(resource.message);
+            });
+        }
 
         mapController.initialize(() -> {
             startLocationIfAllowed();

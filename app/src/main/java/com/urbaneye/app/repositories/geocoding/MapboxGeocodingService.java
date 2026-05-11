@@ -14,6 +14,7 @@ public interface MapboxGeocodingService {
             @Query("limit") int limit,
             @Query("language") String language,
             @Query("types") String types,
-            @Query("proximity") String proximity
+            @Query("proximity") String proximity,
+            @Query("country") String country
     );
 }
