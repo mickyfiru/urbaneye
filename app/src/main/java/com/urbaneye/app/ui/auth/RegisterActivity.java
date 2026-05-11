@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -24,13 +25,16 @@ public class RegisterActivity extends AppCompatActivity {
         EditText username = findViewById(R.id.usernameInput);
         EditText email = findViewById(R.id.emailInput);
         EditText password = findViewById(R.id.passwordInput);
-        findViewById(R.id.createAccountButton).setOnClickListener(v -> viewModel.register(username.getText().toString(), email.getText().toString(), password.getText().toString()).observe(this, resource -> {
-            progress.setVisibility(resource.status.name().equals("LOADING") ? View.VISIBLE : View.GONE);
+        Button createAccountButton = findViewById(R.id.createAccountButton);
+        createAccountButton.setOnClickListener(v -> viewModel.register(username.getText().toString(), email.getText().toString(), password.getText().toString()).observe(this, resource -> {
+            boolean loading = resource.status.name().equals("LOADING");
+            progress.setVisibility(loading ? View.VISIBLE : View.GONE);
+            createAccountButton.setEnabled(!loading);
             if (resource.status.name().equals("SUCCESS")) {
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             }
-            if (resource.status.name().equals("ERROR")) Toast.makeText(this, resource.message, Toast.LENGTH_LONG).show();
+            if (resource.status.name().equals("ERROR")) Toast.makeText(this, resource.message == null ? "No se pudo crear la cuenta." : resource.message, Toast.LENGTH_LONG).show();
         }));
     }
 }

@@ -4,15 +4,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.Query;
 import com.urbaneye.app.domain.models.Alert;
 import com.urbaneye.app.domain.models.AlertStatus;
 import com.urbaneye.app.domain.models.AlertType;
 import com.urbaneye.app.utils.AntiSpamRules;
-import com.urbaneye.app.utils.ReputationRules;
 import com.urbaneye.app.utils.Resource;
 import com.urbaneye.app.utils.TokenRules;
 
@@ -32,7 +31,7 @@ public class AlertRepository {
                 .limit(250)
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null) {
-                        result.setValue(Resource.error(error.getMessage()));
+                        result.setValue(Resource.error(permissionMessage(error)));
                         return;
                     }
                     List<Alert> alerts = new ArrayList<>();
@@ -59,24 +58,22 @@ public class AlertRepository {
         firestore.runTransaction(transaction -> {
             com.google.firebase.firestore.DocumentSnapshot userSnapshot = transaction.get(userRef);
             Long tokens = userSnapshot.getLong("tokens");
-            Long reputation = userSnapshot.getLong("reputation");
             Timestamp lastAlertAt = userSnapshot.getTimestamp("lastAlertAt");
             int currentTokens = tokens == null ? 0 : tokens.intValue();
-            int currentReputation = reputation == null ? 100 : reputation.intValue();
-            if (currentTokens < cost) throw new IllegalStateException("Tokens insuficientes para publicar.");
-            if (alert.type == AlertType.RED && currentReputation < ReputationRules.MIN_REPUTATION_FOR_RED_ALERT) {
-                throw new IllegalStateException("Necesitas más reputación para publicar alertas rojas.");
+            if (currentTokens < cost) {
+                throw new IllegalStateException("Necesitas " + cost + " tokens. Ver anuncio para ganar 20");
             }
             if (AntiSpamRules.isCoolingDown(lastAlertAt)) {
                 throw new IllegalStateException("Espera unos minutos antes de publicar otra alerta.");
             }
-            transaction.update(userRef, "tokens", currentTokens - cost);
-            transaction.update(userRef, "xp", com.google.firebase.firestore.FieldValue.increment(10));
+            transaction.update(userRef, "tokens", FieldValue.increment(-cost));
+            transaction.update(userRef, "xp", FieldValue.increment(10));
+            transaction.update(userRef, "alertsPublished", FieldValue.increment(1));
             transaction.update(userRef, "lastAlertAt", Timestamp.now());
             transaction.set(alertRef, alert);
             return alert.id;
         }).addOnSuccessListener(id -> result.setValue(Resource.success(id)))
-          .addOnFailureListener(e -> result.setValue(Resource.error(e.getMessage())));
+          .addOnFailureListener(e -> result.setValue(Resource.error(permissionMessage(e))));
         return result;
     }
 
@@ -84,6 +81,14 @@ public class AlertRepository {
         if (type == AlertType.RED) return null;
         long minutes = type == AlertType.YELLOW ? TimeUnit.HOURS.toMinutes(3) : greenMinutes;
         return new Timestamp(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(minutes)));
+    }
+
+    private String permissionMessage(Exception e) {
+        String message = e == null ? "Error de Firestore." : e.getMessage();
+        if (message != null && message.toLowerCase().contains("permission")) {
+            return "No tienes permisos para actualizar Firestore. Revisa las reglas de seguridad.";
+        }
+        return message == null ? "Error de Firestore." : message;
     }
 
     private boolean isExpired(Alert alert) {
