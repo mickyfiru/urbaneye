@@ -11,5 +11,11 @@ public class MapboxGeocodingResponse {
         public String placeName;
         public String text;
         public List<Double> center;
+        public Properties properties;
+    }
+
+    public static class Properties {
+        public String address;
+        public String category;
     }
 }

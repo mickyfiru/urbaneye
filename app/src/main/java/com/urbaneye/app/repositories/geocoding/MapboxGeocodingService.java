@@ -13,6 +13,7 @@ public interface MapboxGeocodingService {
             @Query("autocomplete") boolean autocomplete,
             @Query("limit") int limit,
             @Query("language") String language,
-            @Query("types") String types
+            @Query("types") String types,
+            @Query("proximity") String proximity
     );
 }

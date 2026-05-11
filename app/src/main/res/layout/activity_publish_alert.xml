@@ -1,17 +1,30 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/urban_bg">
     <com.mapbox.maps.MapView android:id="@+id/publishMapView" android:layout_width="match_parent" android:layout_height="match_parent" />
-    <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#66050B16" />
+    <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#55050B16" />
+
+    <FrameLayout android:id="@+id/userLocationMarker" android:layout_width="72dp" android:layout_height="72dp" android:layout_gravity="center" android:visibility="gone">
+        <View android:id="@+id/userGlow" android:layout_width="72dp" android:layout_height="72dp" android:layout_gravity="center" android:background="@drawable/bg_user_glow" />
+        <View android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" android:background="@drawable/bg_user_dot" android:elevation="12dp" />
+    </FrameLayout>
+
+    <TextView android:id="@+id/centerPin" android:layout_width="62dp" android:layout_height="62dp" android:layout_gravity="center" android:layout_marginBottom="42dp" android:background="@drawable/bg_pin" android:elevation="22dp" android:gravity="center" android:text="●" android:textColor="@color/urban_bg" android:textSize="18sp" />
+
     <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="20dp">
             <TextView android:id="@+id/backButton" android:layout_width="44dp" android:layout_height="44dp" android:gravity="center" android:text="‹" android:textColor="@color/urban_text" android:textSize="34sp" />
             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="Nueva alerta" android:textColor="@color/urban_text" android:textSize="18sp" android:textStyle="bold" />
             <Space android:layout_width="44dp" android:layout_height="44dp" />
         </LinearLayout>
+
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:background="@drawable/bg_card" android:elevation="16dp" android:orientation="vertical">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Escribe una calle o dirección" android:textColor="@color/urban_text_muted" android:textSize="13sp" />
-            <AutoCompleteTextView android:id="@+id/addressInput" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="10dp" android:background="@drawable/bg_input" android:hint="Av. Arturo Prat, Iquique" android:inputType="textPostalAddress" android:singleLine="true" android:textColor="@color/urban_text" android:textColorHint="@color/urban_text_muted" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Tu ubicación actual" android:textColor="@color/urban_neon" android:textSize="12sp" android:textStyle="bold" />
+            <Button android:id="@+id/useCurrentLocationButton" android:layout_width="match_parent" android:layout_height="50dp" android:layout_marginTop="8dp" android:background="@drawable/bg_neon_button" android:text="Usar mi ubicación actual" android:textAllCaps="false" android:textColor="@color/urban_neon" android:textStyle="bold" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="¿Dónde está la alerta?" android:textColor="@color/urban_text" android:textSize="15sp" android:textStyle="bold" />
+            <EditText android:id="@+id/addressInput" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="10dp" android:background="@drawable/bg_input" android:hint="Busca una calle, universidad o negocio" android:inputType="textPostalAddress" android:singleLine="true" android:textColor="@color/urban_text" android:textColorHint="@color/urban_text_muted" />
+            <TextView android:id="@+id/addressStatusText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Mueve el mapa o busca una dirección para ubicar la alerta." android:textColor="@color/urban_text_muted" android:textSize="12sp" />
+            <androidx.recyclerview.widget.RecyclerView android:id="@+id/suggestionsList" android:layout_width="match_parent" android:layout_height="180dp" android:layout_marginTop="8dp" android:overScrollMode="never" android:visibility="gone" />
         </LinearLayout>
-        <TextView android:id="@+id/selectedPin" android:layout_width="56dp" android:layout_height="56dp" android:layout_gravity="center_horizontal" android:layout_marginTop="96dp" android:background="@drawable/bg_pin" android:elevation="18dp" android:gravity="center" android:text="●" android:textColor="@color/urban_bg" android:textSize="18sp" android:visibility="gone" />
+
         <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_bottom_nav" android:elevation="24dp" android:orientation="vertical" android:padding="20dp">
             <EditText android:id="@+id/titleInput" android:layout_width="match_parent" android:layout_height="52dp" android:background="@drawable/bg_input" android:hint="Título breve" android:textColor="@color/urban_text" android:textColorHint="@color/urban_text_muted" />
