@@ -11,9 +11,9 @@ import com.urbaneye.app.utils.Resource;
 public class PublishAlertViewModel extends BaseViewModel {
     private final AlertRepository repository = new AlertRepository();
 
-    public LiveData<Resource<String>> publish(AlertType type, String title, String description, double lat, double lng, String userId, int greenMinutes) {
+    public LiveData<Resource<String>> publish(AlertType type, String title, String description, String address, double lat, double lng, String userId, int greenMinutes) {
         Timestamp expiresAt = repository.expirationFor(type, greenMinutes);
-        Alert alert = new Alert(type, title, description, lat, lng, userId, expiresAt);
+        Alert alert = new Alert(type, title, description, address, lat, lng, userId, expiresAt);
         return repository.createAlert(alert);
     }
 }

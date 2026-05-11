@@ -7,6 +7,7 @@ public class Alert {
     public AlertType type;
     public String title;
     public String description;
+    public String address;
     public double latitude;
     public double longitude;
     public String createdBy;
@@ -19,10 +20,11 @@ public class Alert {
 
     public Alert() {}
 
-    public Alert(AlertType type, String title, String description, double latitude, double longitude, String createdBy, Timestamp expiresAt) {
+    public Alert(AlertType type, String title, String description, String address, double latitude, double longitude, String createdBy, Timestamp expiresAt) {
         this.type = type;
         this.title = title;
         this.description = description;
+        this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.createdBy = createdBy;
