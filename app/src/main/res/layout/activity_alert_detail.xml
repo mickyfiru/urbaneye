@@ -1,6 +1,9 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="24dp" android:background="@color/urban_bg">
-    <TextView android:id="@+id/titleText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Detalle de alerta" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" />
-    <Button android:id="@+id/confirmButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Sí, sigue ahí" />
-    <Button android:id="@+id/denyButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Ya no existe" />
-    <Button android:id="@+id/reportButton" android:layout_width="match_parent" android:layout_height="64dp" android:text="Reportar abuso" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_app_gradient" android:orientation="vertical" android:padding="24dp">
+    <TextView android:id="@+id/titleText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Detalle de alerta" android:textColor="@color/urban_text" android:textSize="26sp" android:textStyle="bold" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" android:background="@drawable/bg_card" android:elevation="18dp" android:orientation="vertical">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ayuda a validar esta alerta para mejorar la reputación de la comunidad." android:textColor="@color/urban_text_muted" android:textSize="15sp" />
+        <Button android:id="@+id/confirmButton" android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="18dp" android:background="@drawable/bg_neon_button" android:text="Sí, sigue ahí" android:textAllCaps="false" android:textColor="@color/urban_neon" />
+        <Button android:id="@+id/denyButton" android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="12dp" android:background="@drawable/bg_input" android:text="Ya no existe" android:textAllCaps="false" android:textColor="@color/urban_text" />
+        <Button android:id="@+id/reportButton" android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="12dp" android:background="@drawable/bg_input" android:text="Reportar abuso" android:textAllCaps="false" android:textColor="@color/alert_red" />
+    </LinearLayout>
 </LinearLayout>

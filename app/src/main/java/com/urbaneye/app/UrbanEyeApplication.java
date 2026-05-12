@@ -9,7 +9,15 @@ public class UrbanEyeApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        MapboxOptions.accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN;
+        MapboxOptions.accessToken = resolveMapboxToken();
         MobileAds.initialize(this);
+    }
+
+    private String resolveMapboxToken() {
+        String token = getString(R.string.mapbox_access_token);
+        if ((token == null || token.trim().isEmpty() || token.startsWith("${")) && BuildConfig.MAPBOX_ACCESS_TOKEN != null) {
+            token = BuildConfig.MAPBOX_ACCESS_TOKEN;
+        }
+        return token == null ? "" : token.trim();
     }
 }

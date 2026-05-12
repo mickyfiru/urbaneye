@@ -1,8 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center" android:padding="24dp" android:background="@color/urban_bg">
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UrbanEye" android:textColor="@color/urban_primary" android:textSize="34sp" android:textStyle="bold" />
-    <EditText android:id="@+id/emailInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Email" android:inputType="textEmailAddress" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
-    <EditText android:id="@+id/passwordInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Contraseña" android:inputType="textPassword" android:textColor="#FFFFFF" android:textColorHint="#99FFFFFF" />
-    <Button android:id="@+id/loginButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Entrar" />
-    <Button android:id="@+id/registerButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Crear cuenta" />
-    <ProgressBar android:id="@+id/progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone" />
-</LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_app_gradient" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="28dp">
+        <TextView android:layout_width="78dp" android:layout_height="78dp" android:background="@drawable/bg_pin" android:elevation="16dp" android:gravity="center" android:text="●" android:textColor="@color/urban_bg" android:textSize="28sp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="UrbanEye" android:textColor="@color/urban_text" android:textSize="36sp" android:textStyle="bold" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Tu ciudad, en tiempo real." android:textColor="@color/urban_text_muted" android:textSize="16sp" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="34dp" android:background="@drawable/bg_card" android:elevation="18dp" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Inicia sesión" android:textColor="@color/urban_text" android:textSize="22sp" android:textStyle="bold" />
+            <EditText android:id="@+id/emailInput" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:background="@drawable/bg_input" android:hint="Email" android:inputType="textEmailAddress" android:textColor="@color/urban_text" android:textColorHint="@color/urban_text_muted" />
+            <EditText android:id="@+id/passwordInput" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="12dp" android:background="@drawable/bg_input" android:hint="Contraseña" android:inputType="textPassword" android:textColor="@color/urban_text" android:textColorHint="@color/urban_text_muted" />
+            <Button android:id="@+id/loginButton" android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="18dp" android:background="@drawable/bg_primary_button" android:text="Entrar" android:textAllCaps="false" android:textColor="@color/urban_text" android:textStyle="bold" />
+            <Button android:id="@+id/registerButton" android:layout_width="match_parent" android:layout_height="54dp" android:layout_marginTop="10dp" android:background="@drawable/bg_neon_button" android:text="Crear cuenta" android:textAllCaps="false" android:textColor="@color/urban_neon" />
+            <ProgressBar android:id="@+id/progress" android:layout_width="32dp" android:layout_height="32dp" android:layout_gravity="center_horizontal" android:layout_marginTop="12dp" android:indeterminateTint="@color/urban_primary_soft" android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

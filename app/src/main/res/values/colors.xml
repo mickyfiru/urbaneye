@@ -1,8 +1,15 @@
 <resources>
-    <color name="urban_bg">#101820</color>
-    <color name="urban_surface">#182630</color>
-    <color name="urban_primary">#35D07F</color>
-    <color name="alert_red">#F44336</color>
-    <color name="alert_yellow">#FFC107</color>
-    <color name="alert_green">#39D353</color>
+    <color name="urban_bg">#050B16</color>
+    <color name="urban_bg_alt">#081121</color>
+    <color name="urban_surface">#0F1A2E</color>
+    <color name="urban_surface_high">#14213A</color>
+    <color name="urban_stroke">#25385E</color>
+    <color name="urban_primary">#8B5CF6</color>
+    <color name="urban_primary_soft">#A78BFA</color>
+    <color name="urban_neon">#4ADE80</color>
+    <color name="urban_text">#F8FAFC</color>
+    <color name="urban_text_muted">#A7B0C4</color>
+    <color name="alert_red">#F43F5E</color>
+    <color name="alert_yellow">#FBBF24</color>
+    <color name="alert_green">#4ADE80</color>
 </resources>
