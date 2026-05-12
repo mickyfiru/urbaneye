@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tokensText;
     private boolean cameraCentered;
     private boolean cityResolved;
+    private boolean alertsInitialized;
+    private int lastAlertCount;
 
     private final ActivityResultLauncher<String[]> permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> startLocationIfAllowed());
 
@@ -73,8 +75,7 @@ public class MainActivity extends AppCompatActivity {
             startLocationIfAllowed();
             viewModel.observeActiveAlerts().observe(this, resource -> {
                 if (resource.status.name().equals("SUCCESS")) {
-                    mapController.renderAlerts(resource.data);
-                    renderAlertSummary(resource.data);
+                    renderActiveAlerts(resource.data);
                 }
                 if (resource.status.name().equals("ERROR")) showSnack(resource.message);
             });
@@ -125,7 +126,35 @@ public class MainActivity extends AppCompatActivity {
         }
         Alert first = alerts.get(0);
         String address = first.address == null || first.address.isEmpty() ? "Dirección protegida" : first.address;
-        alertsSummaryText.setText(first.type.name() + " · " + first.title + "\n" + address + " · ahora · reputación alta");
+        String type = first.type == null ? "GREEN" : first.type.name();
+        alertsSummaryText.setText(type + " · " + first.title + "\n" + address + " · ahora · reputación alta");
+    }
+
+    private void renderActiveAlerts(List<Alert> alerts) {
+        int currentCount = alerts == null ? 0 : alerts.size();
+        boolean hasNewAlert = alertsInitialized && currentCount > lastAlertCount;
+        if (hasNewAlert) centerOnFirstValidAlert(alerts);
+        mapController.renderAlerts(alerts);
+        renderAlertSummary(alerts);
+        notifyNewAlerts(currentCount);
+    }
+
+    private void centerOnFirstValidAlert(List<Alert> alerts) {
+        if (alerts == null) return;
+        for (Alert alert : alerts) {
+            if (alert.latitude != 0d && alert.longitude != 0d) {
+                mapController.centerOn(alert.latitude, alert.longitude);
+                return;
+            }
+        }
+    }
+
+    private void notifyNewAlerts(int currentCount) {
+        if (alertsInitialized && currentCount > lastAlertCount) {
+            showSnack("Nueva alerta publicada cerca");
+        }
+        alertsInitialized = true;
+        lastAlertCount = currentCount;
     }
 
     private void showSnack(String message) {
